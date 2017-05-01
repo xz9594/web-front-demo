@@ -1,0 +1,27 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-size: 14px;
+	font-family:Arial,"微软雅黑","microsoft yahei";
+}
+
+.box {
+	position:absolute;
+	background:#ccc;
+	border:1px solid #fff;
+}
+
+.block {
+    position:absolute;
+    background:red;
+    border:1px solid #fff;
+}
+
+#game_panel {
+    position:relative;
+    margin-top:10px;
+    margin-left:20px;
+}
