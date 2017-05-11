@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>backbone</title>
+	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="js/underscore-min.js"></script>
+	<script type="text/javascript" src="js/backbone-min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+<body>
+	<table id="js-id-gists" class="table">
+		<thead><th>description</th><th>URL</th><th>created_at</th></thead>
+		<tbody></tbody>
+	</table>
+	<script type="text/javascript">
+		var Gist = Backbone.Model.extend({
+			url: 'https://api.github.com/gists/public',
+			parse: function(response){//处理返回数据，返回的是一个Array，这里取第一个Object
+				return (response[0]);
+			}
+		}),
+		gist = new Gist();
+
+		gist.on('change', function(model){
+			var tbody = document.getElementById('js-id-gists').children[1],
+			tr = document.getElementById(model.get('id'));
+			if(!tr){
+				tr = document.createElement('tr');
+				tr.setAttribute('id', model.get('id'));
+			}
+			tr.innerHTML = '<td>'+model.get('description')+'</td><td>'+model.get('url')+'</td><td>'+model.get('created_at')+'</td>';
+			tbody.appendChild(tr);
+		});
+		gist.fetch();//远程获取数据
+	</script>
+</body>
+</html>
