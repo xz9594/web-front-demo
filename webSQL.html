@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>web SQL</title>
+  </head>
+  <script src="jquery-1.7.1.min.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    //创建或连接数据库
+    function getCurrentDb(){
+      db = openDatabase("data.db", "1.0", "demo data", 1024*1024);
+      return db;
+    }
+    function initDatabase(){
+      var db = getCurrentDb();
+      if(!db){
+        alert("浏览器不支持本地数据库");
+        return;
+      }else {
+        db.transaction(function(trans){
+          trans.executeSql("create table if not exists Demo(uName text null, title text null, words text null)",[],
+          function(trans,result){},function(trans,message){});
+        })
+      }
+    }
+    $(function(){
+      initDatabase();
+      $("#btnSave").click(function(){
+        var txtName = $("#txtName").val();
+        var txtTitle = $("#txtTitle").val();
+        var txtWords = $("#txtWords").val();
+
+        var db = getCurrentDb();
+        //执行脚本插入数据
+        db.transaction(function(trans){
+          trans.executeSql("insert into Demo(uName,title,words) values(?,?,?)",[txtName, txtTitle, txtWords],
+          function(ts,data){}, function(ts,message){alert(message)});
+        });
+
+      })
+    })
+
+    function showAllTheData(){
+      $("#tbData").empty();
+      var db = getCurrentDb();
+      db.transaction(function(trans){
+        trans.executeSql("select * from Demo",[],function(ts,data){
+          if(data){
+            //循环记录
+            for(var i=0; i<data.rows.length; i++){
+              //获取每一行数据的json对象，处理数据
+              appendDateToTable(data.rows.item(i));//传人一行数据
+            }
+          }
+        },function(ts,message){alert(message)});
+      });
+    }
+
+    function appendDateToTable(data){
+      var txtName = data.uName;
+      var txtTitle = data.title;
+      var txtWords = data.words;
+      var strHtml = "<tr>"
+      strHtml += "<td>"+txtName+"</td>";
+      strHtml += "<td>"+txtTitle+"</td>";
+      strHtml += "<td>"+txtWords+"</td>";
+      strHtml += "</tr>";
+      $("#tbData").append(strHtml);
+    }
+  </script>
+  <body>
+    <table>
+      <tr>
+        <td>用户名：</td>
+        <td><input type="text" name="txtName" id="txtName" required></td>
+      </tr>
+      <tr>
+        <td>标题：</td>
+        <td><input type="text" name="txtTitle" id="txtTitle" required></td>
+      </tr>
+      <tr>
+        <td>留言：</td>
+        <td><input type="text" name="txtWords" id="txtWords" required></td>
+      </tr>
+    </table>
+    <input type="button" value="保存" id="btnSave">
+    <hr>
+    <input type="button" value="展示所有数据" onclick="showAllTheData()">
+    <table id="tbData"></table>
+  </body>
+</html>
