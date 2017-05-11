@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>简易留言板</title>
+  </head>
+  <style type="text/css">
+    textarea{
+      width: 500px;
+      height: 200px;
+    }
+  </style>
+  <script type="text/javascript">
+    //使用html5 webstorage方式编写一个简易的留言板
+    function addInfo(){
+      var info = document.getElementById('t1');
+      var LStorage = window.localStorage;
+      if(LStorage.myBoard){
+        var date = new Date();
+        LStorage.myBoard += info.value+"\n发表时间："+date.toLocaleString()+"\n";
+      }else {
+        var date = new Date();
+        LStorage.myBoard = info.value+"\n发表时间："+date.toLocaleString()+"\n";
+      }
+      upInfo();
+    }
+
+    function clearInfo(){
+      window.localStorage.removeItem("myBoard");
+      upInfo();
+    }
+
+    function upInfo(){
+      var show = document.getElementById('show');
+      var LStorage = window.localStorage;
+      if(window.localStorage.myBoard){
+        show.value = window.localStorage.getItem("myBoard");
+      }else {
+        show.value = "还没有留言";
+      }
+    }
+  </script>
+  <body>
+     <div>
+      <h2>简单web存储留言板</h2>
+      <textarea id="t1"></textarea>
+      <br>
+      <input type="button" value="留言" class="button" onclick="addInfo()">
+      <input type="button" value="清除留言" class="button" onclick="clearInfo()">
+      <br>
+      <hr>
+      <textarea id="show" readonly="readyonly"></textarea>
+     </div>
+  </body>
+</html>
